@@ -1,0 +1,214 @@
+{% extends 'jobs/base.html' %}
+{% load static %}
+
+{% block title %}
+    View Jobs
+{% endblock %}
+
+{% block design %}
+<style>
+    body {
+        background-color: #f4f4f4;
+        padding-top: 90px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .filter-sidebar {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        background: white;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .card-title {
+        font-weight: bold;
+        color: #007bff;
+        min-height: 50px; /* Adjust height based on your needs */
+        display: flex;
+        align-items: center;
+    }
+
+    .card-text {
+        color: #6c757d;
+        font-size: 0.9rem;
+        flex-grow: 1;
+    }
+
+    .btn-apply {
+        background: linear-gradient(135deg, #007bff, #6610f2);
+        border: none;
+        color: white;
+        padding: 8px 15px;
+        transition: background 0.3s ease-in-out, transform 0.2s;
+        font-weight: bold;
+        border-radius: 8px;
+        margin-top: auto;
+    }
+
+    .btn-apply:hover {
+        background: linear-gradient(135deg, #6610f2, #007bff);
+        transform: scale(1.05);
+    }
+
+    .icon-text {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+    }
+
+    .rounded-badge {
+        padding: 5px 10px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination .btn {
+        border-radius: 0;
+        /* Make buttons square */
+        padding: 10px 20px;
+        font-weight: bold;
+        border: 1px solid #ddd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Sidebar Filters -->
+        <div class="col-lg-3 mb-4">
+            <div class="filter-sidebar p-3 rounded shadow">
+                <h5 class="mb-3"><i class="fas fa-filter"></i> Filters</h5>
+
+                <!-- 🔎 Search Box -->
+                <label class="form-label">Search Jobs</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Search jobs...">
+                </div>
+
+                <!-- 📂 Job Type -->
+                <label class="form-label">Job Type</label>
+                <select class="form-select mb-3">
+                    <option>All</option>
+                    <option>Full-time</option>
+                    <option>Part-time</option>
+                    <option>Remote</option>
+                </select>
+
+                <!-- 📍 Location -->
+                <label class="form-label">Location</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
+                    <input type="text" class="form-control" placeholder="Enter location">
+                </div>
+
+                <!-- 🏥 Specialitys -->
+                <label class="form-label">Speciality</label>
+                <select class="form-select mb-3">
+                    <option>All</option>
+                    <option>Nursing</option>
+                    <option>Engineering</option>
+                    <option>Marketing</option>
+                    <option>IT & Software</option>
+                </select>
+
+                <!-- 💰 Salary Range -->
+                <label class="form-label">Salary Range</label>
+                <input type="range" class="form-range mb-3">
+
+                <!-- ✅ Apply Filters Button -->
+                <button class="btn btn-primary w-100">Apply Filters</button>
+            </div>
+        </div>
+
+        <!-- Job Listings -->
+        <div class="col-lg-9">
+            {% if page_obj %}
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for job in page_obj %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ job.job_title }}</h5>
+
+                            <!-- Location & Salary -->
+                            <div class="d-flex align-items-center gap-3 mt-2">
+                                <div class="rounded-badge">
+                                    <i class="fas fa-map-marker-alt text-danger"></i>
+                                    <span>{{ job.state }}</span>
+                                </div>
+                                <div class="rounded-badge">
+                                    <i class="fas fa-dollar-sign text-success"></i>
+                                    <span>Competitive</span>
+                                </div>
+                            </div>
+
+                            <p class="card-text mt-3">{{ job.job_description|slice:":100" }}...</p>
+
+                            <a href="{% url 'job_detail' job.job_title_id %}" class="btn btn-apply w-100 mt-3">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-center text-muted">No jobs found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Pagination -->
+<div class="pagination">
+    <span class="step-links d-flex align-items-center gap-2">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-primary">« Prev</a>
+        {% endif %}
+
+        <span class="btn btn-light border">{{ page_obj.number }}</span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-primary">Next »</a>
+        {% endif %}
+    </span>
+</div>
+
+{% if page_obj.number > page_obj.paginator.num_pages %}
+<p class="text-center text-danger mt-3">No jobs exist on this page.</p>
+{% endif %}
+
+{% endblock %}

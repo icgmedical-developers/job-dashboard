@@ -1,0 +1,2 @@
+[config]
+WEBSITE_WEBDEPLOY_USE_SCM=false
