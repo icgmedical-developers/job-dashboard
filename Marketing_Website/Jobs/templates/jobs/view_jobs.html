@@ -1,16 +1,20 @@
 {% extends 'jobs/base.html' %}
 {% load static %}
 
-{% block title %}
-    View Jobs
-{% endblock %}
+{% block title %} View Jobs {% endblock %}
 
 {% block design %}
 <style>
     body {
-        background-color: #f4f4f4;
+        background-color: #f8f9fa;
         padding-top: 90px;
         font-family: 'Poppins', sans-serif;
+        animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
     .filter-sidebar {
@@ -18,19 +22,41 @@
         border-radius: 12px;
         padding: 20px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .filter-sidebar:hover {
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .filter-sidebar h5 {
+        font-weight: bold;
+        color: #005F66;
+    }
+
+    .form-select, .form-control {
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        transition: border-color 0.3s ease;
+    }
+
+    .form-select:focus, .form-control:focus {
+        border-color: #005F66;
+        box-shadow: 0 0 5px rgba(0, 95, 102, 0.5);
     }
 
     .card {
         border: none;
-        border-radius: 15px;
+        border-radius: 12px;
         background: white;
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         transition: all 0.3s ease-in-out;
+        transform: scale(0.98);
     }
 
     .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        transform: scale(1.02);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
     }
 
     .card-body {
@@ -42,20 +68,32 @@
 
     .card-title {
         font-weight: bold;
-        color: #007bff;
-        min-height: 50px; /* Adjust height based on your needs */
+        color: #005F66;
+        min-height: 50px;
         display: flex;
         align-items: center;
+        transition: color 0.3s ease;
+    }
+
+    .card-title:hover {
+        color: #004B4C;
     }
 
     .card-text {
         color: #6c757d;
         font-size: 0.9rem;
         flex-grow: 1;
+        opacity: 0;
+        animation: fadeInText 1s ease-in-out forwards;
+    }
+
+    @keyframes fadeInText {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
     .btn-apply {
-        background: linear-gradient(135deg, #007bff, #6610f2);
+        background: linear-gradient(135deg, #005F66, #008080);
         border: none;
         color: white;
         padding: 8px 15px;
@@ -64,11 +102,11 @@
         border-radius: 8px;
         margin-top: auto;
     }
-
+    
     .btn-apply:hover {
-        background: linear-gradient(135deg, #6610f2, #007bff);
+        background: linear-gradient(135deg, #008080, #005F66);
         transform: scale(1.05);
-    }
+    }    
 
     .icon-text {
         display: flex;
@@ -78,30 +116,47 @@
     }
 
     .rounded-badge {
-        padding: 5px 10px;
+        padding: 5px 12px;
         border-radius: 10px;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+        font-weight: bold;
         display: flex;
         align-items: center;
-        gap: 5px;
-        background-color: #f8f9fa;
-        border: 1px solid #ddd;
+        gap: 6px;
+        background-color: #eef1f7;
+        border: 1px solid #d1d9e6;
+        color: #555;
     }
 
-    /* Pagination */
     .pagination {
         display: flex;
         justify-content: center;
         margin-top: 20px;
+        animation: fadeInPagination 0.5s ease-in-out;
+    }
+
+    @keyframes fadeInPagination {
+        from { opacity: 0; }
+        to { opacity: 1; }
     }
 
     .pagination .btn {
-        border-radius: 0;
-        /* Make buttons square */
+        border-radius: 6px;
         padding: 10px 20px;
         font-weight: bold;
         border: 1px solid #ddd;
     }
+
+    .pagination .btn-primary {
+        background: linear-gradient(135deg, #005F66, #008080);
+        border: none;
+    }
+
+    .pagination .btn-light {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+    }
+
 </style>
 {% endblock %}
 
@@ -112,46 +167,54 @@
         <div class="col-lg-3 mb-4">
             <div class="filter-sidebar p-3 rounded shadow">
                 <h5 class="mb-3"><i class="fas fa-filter"></i> Filters</h5>
+                <form method="POST" action="{% url 'ShowJob_Category' job_types %}">
+                    {% csrf_token %}
 
                 <!-- 🔎 Search Box -->
                 <label class="form-label">Search Jobs</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text"><i class="fas fa-search"></i></span>
-                    <input type="text" class="form-control" placeholder="Search jobs...">
+                    <input type="text" class="form-control" name="search_query" placeholder="Search jobs...">
                 </div>
 
                 <!-- 📂 Job Type -->
-                <label class="form-label">Job Type</label>
-                <select class="form-select mb-3">
-                    <option>All</option>
-                    <option>Full-time</option>
-                    <option>Part-time</option>
-                    <option>Remote</option>
+                <label class="form-label">Category</label>
+                <select class="form-select mb-3" name="category" id="category" onchange="updateDiscipline();">
+                    <option value="">Select Category</option>
+                    {% for category, subcategories in category_subcategories %}
+                        <option value="{{ category }}" {% if category == selected_category %}selected{% endif %}>
+                            {{ category }}
+                        </option>
+                    {% endfor %}
                 </select>
 
-                <!-- 📍 Location -->
-                <label class="form-label">Location</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text"><i class="fas fa-map-marker-alt"></i></span>
-                    <input type="text" class="form-control" placeholder="Enter location">
-                </div>
+                <!-- 📂 Subcategory 
+                <select class="form-select mb-3" name="subcategory" id="subcategory">
+                    <option value="">Select Subcategory</option>
+                </select>
+                -->
 
-                <!-- 🏥 Specialitys -->
-                <label class="form-label">Speciality</label>
-                <select class="form-select mb-3">
-                    <option>All</option>
-                    <option>Nursing</option>
-                    <option>Engineering</option>
-                    <option>Marketing</option>
-                    <option>IT & Software</option>
+                <!-- 📂 Discipline -->
+                <select class="form-select mb-3" name="discipline" id="discipline">
+                    <option value="">Select Discipline</option>
+                    {% if selected_discipline %}
+                        <option value="{{ selected_discipline }}" selected>{{ selected_discipline }}</option>
+                    {% endif %}
                 </select>
 
-                <!-- 💰 Salary Range -->
-                <label class="form-label">Salary Range</label>
-                <input type="range" class="form-range mb-3">
+                <!-- 🏥 Speciality -->
+                <label class="form-label">Specialty</label>
+                <select class="form-select mb-3" name="specialty">
+                    {% for specialty in specialities %}
+                    <option value="{{ specialty }}" {% if specialty == selected_specialty %}selected{% endif %}>
+                        {{ specialty }}
+                    </option>
+                    {% endfor %}
+                </select>
 
                 <!-- ✅ Apply Filters Button -->
-                <button class="btn btn-primary w-100">Apply Filters</button>
+                <button class="btn-apply w-100">Apply Filters</button>
+            </form>
             </div>
         </div>
 
@@ -162,9 +225,11 @@
                 {% for job in page_obj %}
                 <div class="col">
                     <div class="card h-100">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ job.job_title }}</h5>
-
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex w-100 justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">{{ job.job_title }}</h5>
+                                <img src="{% static 'Jobs/sec_logo.svg' %}" class="card-img" alt="Job Image" style="height: 50px; width: auto; max-width: 50px; object-fit: contain;">
+                            </div>
                             <!-- Location & Salary -->
                             <div class="d-flex align-items-center gap-3 mt-2">
                                 <div class="rounded-badge">
@@ -210,5 +275,68 @@
 {% if page_obj.number > page_obj.paginator.num_pages %}
 <p class="text-center text-danger mt-3">No jobs exist on this page.</p>
 {% endif %}
+
+<script>
+    const subcategories = {
+        {% for category, subcategories_list in category_subcategories %}
+            "{{ category }}": [
+                {% for subcategory in subcategories_list %}
+                    "{{ subcategory }}"{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            ]{% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    const disciplines = {
+        {% for category, discipline_list in categories_discipline %}
+            "{{ category }}": [
+                {% for discipline in discipline_list %}
+                    "{{ discipline }}"{% if not loop.last %}, {% endif %}
+                {% endfor %}
+            ]{% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    function updateSubCategory() {
+        const category = document.getElementById("category").value;
+        const subCategorySelect = document.getElementById("subcategory");
+
+        subCategorySelect.innerHTML = "<option value=''>Select Subcategory</option>";
+
+        (subcategories[category] || []).forEach(subcategory => {
+            const option = document.createElement("option");
+            option.value = subcategory;
+            option.textContent = subcategory;
+            subCategorySelect.appendChild(option);
+        });
+    }
+
+    function updateDiscipline() {
+        let category = document.getElementById("category").value;
+        let disciplineSelect = document.getElementById("discipline");
+        let selectedDiscipline = "{{ selected_discipline }}";  // Fetch from Jinja
+
+        disciplineSelect.innerHTML = '<option value="">Select Discipline</option>';
+        
+        if (category in disciplines) {
+            disciplines[category].forEach(discipline => {
+                let option = document.createElement("option");
+                option.value = discipline;
+                option.textContent = discipline;
+
+                // Mark the selected discipline
+                if (discipline === selectedDiscipline) {
+                    option.selected = true;
+                }
+
+                disciplineSelect.appendChild(option);
+            });
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        updateDiscipline();
+    });
+</script>
 
 {% endblock %}

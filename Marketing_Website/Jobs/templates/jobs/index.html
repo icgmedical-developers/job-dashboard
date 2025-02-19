@@ -8,8 +8,6 @@
 {% block design %}
 <style>
     /* Ensure uniform height for the carousel */
-   
-  
     #carouselExampleAutoplaying .carousel-item img {
       width: 100%;
       height: auto;
@@ -45,7 +43,7 @@
   
     /* Stylish Button */
     .explore-btn {
-      background-color: #ff8c00;
+      background-color: #005F66; /* Updated button background */
       border: none;
       font-size: 1.2rem;
       padding: 12px 24px;
@@ -53,16 +51,21 @@
       align-items: center;
       gap: 10px;
     }
-  
+    
     .explore-btn i {
       font-size: 1.5rem;
+    }
+    
+    /* Button Hover Effect */
+    .explore-btn:hover {
+      background-color: #004a4a; /* Slightly darker shade for hover effect */
     }
   
     /* Bottom Thick Separator */
     .carousel-separator {
       width: 100%;
       height: 6px; /* Adjust thickness */
-      background: #ff8c00; /* Orange separator */
+      background: #005F66; /* Orange separator */
       position: absolute;
       bottom: 0;
       left: 0;
@@ -75,116 +78,358 @@
     }
 
     /* Orangish Theme */
-  .text-orange {
-    color: #ff6f00 !important;
+    .text-orange {
+      color: #005F66 !important;
+    }
+
+    /* Button Styling for Orange Theme */
+    .btn-orange {
+      background-color: #005F66; /* Updated button background */
+      border: none;
+      color: white;
+    }
+
+    .btn-orange:hover {
+      background-color: #004a4a; /* Slightly darker shade for hover effect */
+    }
+
+    .card {
+      border: none;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease-in-out;
+      transform: scale(0.98);
+  }
+  
+  .card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+  }
+  
+  .card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+  }
+  
+  .card-title {
+      font-weight: bold;
+      color: #005F66;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      transition: color 0.3s ease;
+  }
+  
+  .card-title:hover {
+      color: #004B4C;
+  }
+  
+  .card-text {
+      color: #6c757d;
+      font-size: 0.9rem;
+      flex-grow: 1;
+      opacity: 0;
+      animation: fadeInText 1s ease-in-out forwards;
+  }
+  
+  /* Job Image */
+  .card-img {
+      height: 50px;
+      width: auto;
+      max-width: 50px;
+      object-fit: contain;
+  }
+  
+  /* Location Badge */
+  .rounded-badge {
+      display: flex;
+      align-items: center;
+      background: #f8f9fa;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: #333;
+      font-weight: 500;
+  }
+  
+  /* Apply Button */
+  .btn-apply {
+      background-color: #004B4C;
+      color: white;
+      font-weight: bold;
+      transition: background-color 0.3s ease-in-out;
+  }
+  
+  .btn-apply:hover {
+      background-color: #004B4C;
+  }
+  
+  /* Fade-in Animation */
+  @keyframes fadeInText {
+      from {
+          opacity: 0;
+      }
+      to {
+          opacity: 1;
+      }
   }
 
-  .btn-orange {
-    background-color: #ff8c00;
-    border: none;
-    color: white;
-  }
+  /* Centering the Carousel Caption */
+.carousel-caption-custom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Perfect centering */
+  text-align: center;
+  width: 80%;
+  max-width: 700px;
+  background: rgba(255, 255, 255, 0.1); /* Lighter white overlay */
+  backdrop-filter: blur(5px); /* Softer blur effect */
+  padding: 30px;
+  border-radius: 15px;
+  color: #fff;
+  animation: fadeInUp 1s ease-in-out;
+}
 
-  .btn-orange:hover {
-    background-color: #ff8c00;
-  }
+/* Heading Styling */
+.carousel-caption-custom h4 {
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
-  /* Card Styling */
-  .job-card {
-    border-radius: 12px;
-    transition: transform 0.3s ease-in-out;
-  }
+.carousel-caption-custom h2 {
+  font-size: 2.2rem;
+  font-weight: bold;
+  margin: 10px 0;
+}
 
-  .job-card:hover {
-    transform: scale(1.05);
-  }
-  </style>
+/* Explore Button */
+.explore-btn {
+  background: #004B4C;
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 30px;
+  transition: all 0.3s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+}
+
+.explore-btn:hover {
+  background: linear-gradient(135deg, #005F66, #008080);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 123, 255, 0.5);
+}
+
+/* Fade In Animation */
+
+.card-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.card {
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+  padding: 20px;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+}
+
+.icon-box {
+  background: white;
+  color: #005F66;
+  font-size: 30px;
+  padding: 10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  margin-right: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.text-box {
+  font-weight: bold;
+  font-size: 1rem;
+  color: #004B4C;
+  display: flex;
+  align-items: center;
+}
+
+/* Separator */
+.custom-separator {
+  border: none;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #005F66, transparent);
+    margin: 30px 0;
+}
+
+/* Card Styling */
+</style>
   
 {% endblock %}
 
 {% block content %}
 <div id="carouselExampleAutoplaying" class="carousel slide position-relative" data-bs-ride="carousel">
-    <div class="carousel-inner">
+  <div class="carousel-inner">
       <div class="carousel-item active">
-        <img src="https://www.greenstaffmedical.com/images/header_new_image%20-%20Copy.jpg" class="d-block w-100 img-fluid" alt="Jobs Image">
+          <img src="https://www.greenstaffmedical.com/images/header_new_image%20-%20Copy.jpg" class="d-block w-100 img-fluid" alt="Jobs Image">
       </div>
-    </div>
-  
-    <!-- Overlay -->
-    <div class="carousel-overlay"></div>
-  
-    <!-- Centered Content -->
-    <div class="carousel-caption-custom">
-      <h2 class="fw-bold">Search For Your Next Job</h2>
-      <a href="{% url 'ShowJobs' %}" class="btn explore-btn text-white">
-        <i class="fas fa-search"></i> Explore Jobs
-      </a>
-    </div>
-  
-    <!-- Bottom Separator -->
-    <div class="carousel-separator"></div>
-  
-    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span>
-      <span class="visually-hidden">Next</span>
-    </button>
   </div>
 
-  <style>
-    /* Section Styling */
-    .recent-jobs-section {
-      padding: 50px 0;
-      background-color: #f8f9fa;
-    }
+  <!-- Overlay -->
+  <div class="carousel-overlay"></div>
+
+  <!-- Centered Content -->
+  <div class="carousel-caption-custom">
+      <h4>{{ num_of_jobs }} Jobs Available</h4>
+      <h2 class="fw-bold">Search For Your Next Job</h2>
+      <a href="{% url 'ShowJob_Category' 'All' %}" class="btn explore-btn text-white">
+          <i class="fas fa-search"></i> Explore Jobs
+      </a>
+  </div>
+
   
-    .job-card {
-      border: none;
-      transition: transform 0.3s ease-in-out, box-shadow 0.3s;
-    }
+  <!-- Bottom Separator -->
+  <div class="carousel-separator"></div>
+
+  <!-- Carousel Controls
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+  </button>
+  -->
+</div>
+
+<div class="container mt-5">
+  <h4 class="text-center mb-4 fw-bold text-orange"><i>Popular Searches</i></h4><br/>
   
-    .job-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-  
-    .job-card .card-body {
-      text-align: center;
-    }
-  
-    .job-card .btn-apply {
-      background-color: #ff8c00;
-      border: none;
-      font-size: 1rem;
-    }
-  </style>
-  
+  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+      <!-- Travel Assignments -->
+      <div class="col">
+        <a href="{% url 'ShowJob_Category' 'travel' %}" class="card-link">
+              <div class="card h-100 shadow p-3 d-flex align-items-center">
+                  <div class="d-flex">
+                      <div class="icon-box">
+                          <i class="fas fa-globe"></i>
+                      </div>
+                      <div class="text-box">
+                          Travel Assignments
+                      </div>
+                  </div>
+              </div>
+          </a>
+      </div>
+
+      <!-- Per Diem Jobs -->
+      <div class="col">
+          <a href="{% url 'ShowJob_Category' 'per-diem' %}" class="card-link">
+              <div class="card h-100 shadow p-3 d-flex align-items-center">
+                  <div class="d-flex">
+                      <div class="icon-box">
+                          <i class="fas fa-plane"></i>
+                      </div>
+                      <div class="text-box">
+                          Per Diem Jobs
+                      </div>
+                  </div>
+              </div>
+          </a>
+      </div>
+
+      <!-- Allied Services -->
+      <div class="col">
+          <a href="{% url 'ShowJob_Category' 'allied' %}" class="card-link">
+              <div class="card h-100 shadow p-3 d-flex align-items-center">
+                  <div class="d-flex">
+                      <div class="icon-box">
+                          <i class="fas fa-calendar-alt"></i>
+                      </div>
+                      <div class="text-box">
+                          Allied Services
+                      </div>
+                  </div>
+              </div>
+          </a>
+      </div>
+
+      <!-- Physician and Provider Solutions -->
+      <div class="col">
+          <a href="{% url 'ShowJob_Category' 'physician' %}" class="card-link">
+              <div class="card h-100 shadow p-3 d-flex align-items-center">
+                  <div class="d-flex">
+                      <div class="icon-box">
+                          <i class="fas fa-user-md"></i>
+                      </div>
+                      <div class="text-box">
+                          Physician and Provider Solutions
+                      </div>
+                  </div>
+              </div>
+          </a>
+      </div>
+  </div>
+
+  <!-- Separator Line -->
+  <div class="custom-separator"></div>
+</div>
+
+<br/>
+
   <section class="recent-jobs-section">
     <div class="container">
-      <h2 class="text-center mb-4 fw-bold text-orange">Recently Updated Jobs</h2>
+      <h4 class="text-center mb-4 fw-bold text-orange"><i>Recently Updated Jobs</i></h4>
       
-      <div class="row">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
         {% for job in recent_jobs %}
-        <div class="col-md-6 col-lg-3 mb-4">
-          <div class="card job-card h-100 shadow">
-            <div class="card-body d-flex flex-column">
-              <h5 class="card-title fw-bold">{{ job.job_title }}</h5>
-              <p class="card-text">
-                <i class="fas fa-map-marker-alt text-orange"></i> {{ job.city }}, {{job.state}}
-              </p>
-              <div class="mt-auto">
-                <a href="{% url 'job_detail' job.job_title_id %}" class="btn btn-orange w-100">
-                  <i class="fas fa-briefcase"></i> View Details
-                </a>
-              </div>
+        <div class="col">
+            <div class="card h-100 shadow p-3">
+                <div class="card-body">
+                    <!-- Job Title & Image Row -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">{{ job.job_title }}</h5>
+                        <img src="{% static 'Jobs/sec_logo.svg' %}" class="card-img" alt="Job Image"
+                            style="height: 50px; width: auto; max-width: 50px; object-fit: contain;">
+                    </div>
+    
+                    <!-- Location Row -->
+                    <div class="d-flex align-items-center gap-3 mt-2">
+                        <div class="rounded-badge">
+                            <i class="fas fa-map-marker-alt text-danger"></i>
+                            <span>{{ job.city }}, {{ job.state }}</span>
+                        </div>
+                    </div>
+    
+                    <!-- Job Description -->
+                    <p class="card-text mt-3">{{ job.job_description|slice:":100" }}...</p>
+    
+                    <!-- Apply Button -->
+                    <a href="{% url 'job_detail' job.job_title_id %}" class="btn btn-apply w-100 mt-3">View Details</a>
+                </div>
             </div>
-          </div>
         </div>
         {% endfor %}
-      </div>
+    </div>
+    
     </div>
   </section>
   

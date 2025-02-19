@@ -8,6 +8,8 @@ from datetime import datetime
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404
+from .list_of_values import specialities, category_subcategories, categories_discipline
+from django.db.models import Q
 
 def format_date(date_str):
     """Convert date from DD/MM/YYYY to YYYY-MM-DD format."""
@@ -32,9 +34,10 @@ def extract_values(html):
         return None, None
 
 def Homepage(request):
-    recent_jobs = Job.objects.all().order_by('-post_date')[:8]  # Fetch latest 8 jobs
-    print(recent_jobs)
-    return render(request,'jobs/index.html', {'recent_jobs':recent_jobs})
+    recent_jobs = Job.objects.all().order_by('-post_date')[:8]
+    num_of_jobs = Job.objects.count()  # Efficient counting with aggregate
+    print(num_of_jobs)
+    return render(request, 'jobs/index.html', {'recent_jobs': recent_jobs, "num_of_jobs": num_of_jobs})
 
 def get_text(element):
     """Extract text from an XML element, return an empty string if None."""
@@ -80,10 +83,14 @@ def Extract_Data_From_XML(request):
                         print(f"Skipping duplicate job with reference number: {reference_number}")
                         continue  # Skip this job
 
+                    job_title_values = extract_values(get_text(job.find("title")))[1].strip()
+                    if len(job_title_values)==0:
+                        job_title_values="Job"
+
                     # Extract other job details
                     job_data = {
                         "job_title_id": extract_values(get_text(job.find("title")))[0],
-                        "job_title": extract_values(get_text(job.find("title")))[1],
+                        "job_title": job_title_values,
                         "facility_name": get_text(job.find("FacilityName")),
                         "bill_rate": get_text(job.find("BillRate")),
                         "pay_rate": get_text(job.find("PayRate")),
@@ -134,20 +141,119 @@ def Extract_Data_From_XML(request):
         return JsonResponse({"status": "failure", "message": f"Failed to fetch XML. Status Code: {response.status_code}"})
 
 
-def ShowJobs(request):
-    all_jobs = Job.objects.all().order_by('post_date')  # Order jobs by 'created_at' or another field
-    
-    paginator = Paginator(all_jobs, 18)  # Show 18 jobs per page
-    
-    page_number = request.GET.get('page')  # Get the current page number from the URL
-    page_obj = paginator.get_page(page_number)  # Get the jobs for the current page
+# def ShowJobs(request):
+#     if request.method == "POST":
+#         category = request.POST.get("category", "").strip()
+#         subcategory = request.POST.get("subcategory", "").strip()
+#         discipline = request.POST.get("discipline", "").strip()
+#         specialty = request.POST.get("specialty", "").strip()
+#         search_query = request.POST.get("search_query", "").strip()
 
-    print(page_obj.object_list)  # Check the jobs on the current page
+#         # Apply filters if values are provided
+#         if category:
+#             all_jobs = Job.objects.filter(category=category).order_by('post_date')
+#         elif subcategory:
+#             all_jobs = Job.objects.filter(category=category, subcategory=subcategory)
+#         elif discipline:
+#             all_jobs = Job.objects.filter(category=category, discipline=discipline)
+#         elif specialty:
+#             all_jobs = Job.objects.filter(specialty=specialty)
 
-    return render(request, 'jobs/view_jobs.html', {'page_obj': page_obj})
+#     else:
+#         all_jobs = Job.objects.all().order_by('post_date')  # Default: show all jobs
+
+#     # Calculate the number of jobs
+#     num_of_jobs = all_jobs.count()
+    
+#     paginator = Paginator(all_jobs, 18)  # Show 18 jobs per page
+    
+#     page_number = request.GET.get('page')  # Get the current page number from the URL
+#     page_obj = paginator.get_page(page_number)  # Get the jobs for the current page
+
+#     print(page_obj.object_list)  # Check the jobs on the current page
+
+#     return render(request, 'jobs/view_jobs.html', {'page_obj': page_obj, 'specialities': specialities, "category_subcategories": category_subcategories, "categories_discipline":categories_discipline, "num_of_jobs":num_of_jobs })
 
 def job_detail(request, job_title_id):
     job = get_object_or_404(Job, job_title_id=job_title_id)
     return render(request, 'jobs/job_detail.html', {'job': job})
 
+def ShowJob_Category(request, job_types):
+    # Dictionary to map categories to their corresponding filter values
+    job_types_filters = {
+        "travel": ["GS US Travel"],
+        "per-diem": ["GS US Per Diem"],
+        "allied": ["GS US Allied"],
+        "physician": ["GS US Locums", "GS US Provider Perm"],
+    }
+
+    # Fetch jobs based on category, default to an empty list if category not found
+    filter_values = job_types_filters.get(job_types, [])
+    
+    if request.method=='POST':
+        category = request.POST.get("category", "").strip()
+        discipline = request.POST.get("discipline", "").strip()
+        specialty = request.POST.get("specialty", "").strip()
+        search_query = request.POST.get("search_query", "").strip()
+
+        # Build the filter dynamically
+        filters = Q()
+        if category:
+            filters &= Q(category=category)
+        if discipline:
+            filters &= Q(discipline=discipline)
+        if specialty and specialty!='Select the Speciality':
+            filters &= Q(specialty=specialty)
+        if search_query:
+            filters &= Q(job_title__icontains=search_query)
+
+        print(filters)
+        print(job_types)
+        if filters and job_types=='All':
+            all_jobs = Job.objects.filter(filters)
         
+        else:
+            all_jobs = Job.objects.filter(filters, business_type__in=filter_values).order_by('post_date') if filter_values else Job.objects.none()
+
+        paginator = Paginator(all_jobs, 18)  # Show 18 jobs per page
+    
+        page_number = request.GET.get('page')  # Get the current page number from the URL
+        page_obj = paginator.get_page(page_number)  # Get the jobs for the current page
+
+        print(page_obj.object_list)  # Check the jobs on the current page
+        print(job_types)
+
+        return render(request, 'jobs/view_jobs.html', {
+            'page_obj': page_obj,
+            'specialities': specialities,
+            'category_subcategories': category_subcategories,
+            'categories_discipline': categories_discipline,
+            'job_types': job_types,
+            'selected_category': category,
+            'selected_discipline': discipline,
+            'selected_specialty': specialty
+        })
+
+    else:
+        all_jobs = Job.objects.filter(business_type__in=filter_values).order_by('post_date') if filter_values else Job.objects.none()
+
+        if job_types=='All':
+            all_jobs = Job.objects.all().order_by('post_date')
+
+        paginator = Paginator(all_jobs, 18)  # Show 18 jobs per page
+        
+        page_number = request.GET.get('page')  # Get the current page number from the URL
+        page_obj = paginator.get_page(page_number)  # Get the jobs for the current page
+
+        print(page_obj.object_list)  # Check the jobs on the current page
+        print(job_types)
+
+        return render(request, 'jobs/view_jobs.html', {
+            'page_obj': page_obj,
+            'specialities': specialities,
+            'category_subcategories': category_subcategories,
+            'categories_discipline': categories_discipline,
+            'job_types': job_types,
+        })
+
+

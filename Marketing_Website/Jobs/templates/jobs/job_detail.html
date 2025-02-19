@@ -5,39 +5,77 @@
 {% endblock %}
 
 {% load static %}
+
 {% block design %}
 <style>
     body {
         padding-top: 90px;
         font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
     }
 
     .job-card {
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .job-card:hover {
+        transform: translateY(-5px);
     }
 
     .job-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-    }
-
-    .dark-mode .btn-apply {
-        background: linear-gradient(135deg, #6610f2, #007bff);
+        background: linear-gradient(135deg, #005F66, #008080); /* Updated gradient */
+        padding: 20px;
+        border-radius: 10px;
         color: white;
     }
 
     .job-header h2 {
         margin: 0;
-        font-size: 24px;
+        font-size: 26px;
         font-weight: bold;
     }
 
+    .btn-apply {
+        background: linear-gradient(135deg, #005F66, #008080); /* Updated gradient */
+        color: white;
+        font-weight: bold;
+        padding: 10px 20px;
+        border-radius: 8px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-apply:hover {
+        background: linear-gradient(135deg, #008080, #005F66); /* Reverse gradient on hover */
+        transform: scale(1.05);
+    }
+
+    .job-details {
+        margin-top: 20px;
+    }
+
+    .job-details p {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+
     .icon {
-        color: #007bff;
+        color: #005F66; /* Updated icon color */
         margin-right: 8px;
+    }
+
+    .description {
+        background: #f1f2f6;
+        padding: 15px;
+        border-radius: 8px;
+        font-size: 16px;
     }
 </style>
 {% endblock %}
@@ -47,35 +85,36 @@
     <div class="job-card">
         <div class="job-header">
             <h2><i class="fas fa-briefcase icon"></i> {{ job.job_title }}</h2>
-            <a href="{{job.job_url}}" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Apply Now</a>
+            <a href="{{ job.job_url }}" class="btn btn-apply"><i class="fas fa-paper-plane"></i> Apply Now</a>
         </div>
-        <hr />
-        <div class="row">
-            <div class="col-md-4">
-                <p><strong><i class="fas fa-map-marker-alt icon"></i> Location:</strong> {{ job.city }}</p>
+        <div class="job-details">
+            <div class="row">
+                <div class="col-md-4">
+                    <p><strong><i class="fas fa-map-marker-alt icon"></i> Location:</strong> {{ job.city }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong><i class="fas fa-tags icon"></i> Category:</strong> {{ job.category }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong><i class="fas fa-cogs icon"></i> Discipline:</strong> {{ job.discipline }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong><i class="fas fa-hashtag icon"></i> Reference No:</strong> {{ job.reference_number }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong><i class="fas fa-clipboard-list icon"></i> Job Type:</strong> {{ job.job_type }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong><i class="fas fa-calendar-plus icon"></i> Post Date:</strong> {{ job.post_date }}</p>
+                </div>
+                <div class="col-md-4">
+                    <p><strong><i class="fas fa-calendar-times icon"></i> End Date:</strong> {{ job.end_date }}</p>
+                </div>
             </div>
-            <div class="col-md-4">
-                <p><strong><i class="fas fa-tags icon"></i> Category:</strong> {{ job.category }}</p>
-            </div>
-            <div class="col-md-4">
-                <p><strong><i class="fas fa-cogs icon"></i> Discipline:</strong> {{ job.discipline }}</p>
-            </div>
-            <div class="col-md-4">
-                <p><strong><i class="fas fa-hashtag icon"></i> Reference No:</strong> {{ job.reference_number }}</p>
-            </div>
-            <div class="col-md-4">
-                <p><strong><i class="fas fa-clipboard-list icon"></i> Job Type:</strong> {{ job.job_type }}</p>
-            </div>
-            <div class="col-md-4">
-                <p><strong><i class="fas fa-calendar-plus icon"></i> Post Date:</strong> {{ job.post_date }}</p>
-            </div>
-            <div class="col-md-4">
-                <p><strong><i class="fas fa-calendar-times icon"></i> End Date:</strong> {{ job.end_date }}</p>
-            </div>
+            <hr />
+            <p><strong><i class="fas fa-file-alt icon"></i> Description:</strong></p>
+            <p class="description">{{ job.description|safe }}</p>
         </div>
-        <hr />
-        <p><strong><i class="fas fa-file-alt icon"></i> Description:</strong></p>
-        <p>{{ job.description|safe }}</p>
     </div>
 </div>
 {% endblock %}
